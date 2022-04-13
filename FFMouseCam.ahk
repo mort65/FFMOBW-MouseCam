@@ -16,7 +16,8 @@ bInvertX := False
 bInvertY := False
 minD := 3
 delay := 25
-edgePerW := 0.05edgePerH := 0.025
+edgePerW := 0.05
+edgePerH := 0.025
 ;;;;;;;;;;;;;;;;;;;;;;
 
 _bMouseCam := False
@@ -47,7 +48,7 @@ MouseCam:
     }
     _X := (edgePerW * Width)
     _Y := (edgePerH * height)
-	_Width := (Width - _X)
+    _Width := (Width - _X)
     _Height := (height - _Y)
     While (_bMouseCam) 
     {
