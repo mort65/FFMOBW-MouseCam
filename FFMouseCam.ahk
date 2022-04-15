@@ -42,9 +42,9 @@ MouseCam:
     {
         Return
     }
-    if (bHideMouse and FileExist("nomousy.exe"))
+    if (bHideMouse and FileExist(A_ScriptDir . "\nomousy.exe"))
     {
-        Run, nomousy.exe /hide ;hide cursor
+        Run, %A_ScriptDir%\nomousy.exe /hide ;hide cursor
     }
     _X := (edgePerW * Width)
     _Y := (edgePerH * height)
@@ -57,84 +57,32 @@ MouseCam:
         dX := _xpos - xpos
         dY := _ypos - ypos
         key := ""
-        if ((Abs(dX) > Abs(dY) and (Abs(dX) >= minD)) or (Abs(_xpos) >= _Width) or (Abs(_xpos) <= _X and (Abs(_xpos) < Abs(_ypos))))
+        
+        if (Abs(dX) > Abs(dY) and (Abs(dX) >= minD))
         {
-            if (dX > 0 or (Abs(_xpos) >= _Width))
-            {
-                if (bInvertX)
-                {
-                    key := leftKey
-                }
-                else
-                {
-                    key := rightKey
-                }
-                
-                if WinActive("ahk_exe FATAL_FRAME_MOBW.exe")
-                {
-                    SendInput {%key% down}
-                    Sleep %delay%
-                    SendInput {%key% up}                    
-                }
-            }
-            else if (dX < 0 or (Abs(_xpos) <= _X))
-            {
-                if (bInvertX)
-                {
-                    key := rightKey
-                }
-                else
-                {
-                    key := leftKey
-                }
-                if WinActive("ahk_exe FATAL_FRAME_MOBW.exe") 
-                {
-                    SendInput {%key% down}
-                    Sleep %delay%
-                    SendInput {%key% up}
-                }
-            }
+            key := bInvertX ? (dX > 0 ? leftKey : rightKey) : (dX > 0 ? rightKey : leftKey)
+        }
+        else if (Abs(dX) < Abs(dY) and (Abs(dY) >= minD))
+        {
+            key := bInvertY ? (dY > 0 ? upKey : downkey) : (dY > 0 ? downkey : upKey)
+        }
+        else if ((Abs(_xpos) >= _Width) or (Abs(_xpos) <= _X and (Abs(_xpos) < Abs(_ypos))))
+        {
+            key := bInvertX ? (Abs(_xpos) >= _Width ? leftKey : rightKey) : (Abs(_xpos) >= _Width ? rightKey : leftKey)
             
         }
-        else if ((Abs(dX) < Abs(dY) and (Abs(dY) >= minD)) or (Abs(_ypos) >= _Height) or (Abs(_ypos) <= _Y and (Abs(_ypos) < Abs(_xpos))))
+        else if ((Abs(_ypos) >= _Height) or (Abs(_ypos) <= _Y and (Abs(_ypos) < Abs(_xpos))))
         {
-            if (dY < 0 or (Abs(_ypos) <= _Y))
-            {
-                if (bInvertY)
-                {
-                    key := downKey
-                }
-                else
-                {
-                    key := upKey
-                }
-                
-                if WinActive("ahk_exe FATAL_FRAME_MOBW.exe") 
-                {
-                    SendInput {%key% down}
-                    Sleep %delay%
-                    SendInput {%key% up}
-                }
-            }
-            else if (dY > 0 or (Abs(_ypos) >= _Height ))
-            {
-                if (bInvertY)
-                {
-                    key := upKey
-                }
-                else
-                {
-                    key := downKey
-                }
-                
-                if WinActive("ahk_exe FATAL_FRAME_MOBW.exe")
-                {
-                    SendInput {%key% down}
-                    Sleep %delay%
-                    SendInput {%key% up}
-                }
-            }               
+            key := bInvertY ? (Abs(_ypos) >= _Height ? upKey : downKey) : (Abs(_ypos) >= _Height ? downKey : upKey)
         }
+        
+        if (key and WinActive("ahk_exe FATAL_FRAME_MOBW.exe"))
+        {
+            SendInput {%key% down}
+            Sleep %delay%
+            SendInput {%key% up}
+        }
+        
         xpos:=_xpos
         ypos:=_ypos
     }
@@ -144,9 +92,9 @@ MouseCam:
 MouseCamOff:
 {
     _bMouseCam := False
-    if (bHideMouse and FileExist("nomousy.exe"))
+    if (bHideMouse and FileExist(A_ScriptDir . "\nomousy.exe"))
     {
-        Run, nomousy.exe ;show cursor
+        Run, %A_ScriptDir%\nomousy.exe ;show cursor
     }
     Return
 }
