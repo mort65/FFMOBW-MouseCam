@@ -1,4 +1,4 @@
-﻿#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 ; #Warn  ; Enable warnings to assist with detecting common errors.
 #SingleInstance Force
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
@@ -74,14 +74,17 @@ MouseCam:
         {
             key := bInvertY ? (Abs(_ypos) >= _Height ? upKey : downKey) : (Abs(_ypos) >= _Height ? downKey : upKey)
         }        
-        if (key and WinActive("ahk_exe FATAL_FRAME_MOBW.exe"))
+        if (key)
         {
-            SendInput {%key% down}
-            Sleep %delay%
-            SendInput {%key% up}
-        }       
-        xpos:=_xpos
-        ypos:=_ypos
+            if WinActive("ahk_exe FATAL_FRAME_MOBW.exe")
+            {
+                SendInput {%key% down}
+                Sleep %delay%
+                SendInput {%key% up}
+            }       
+            xpos:=_xpos
+            ypos:=_ypos
+        }
     }
     Return
 }
