@@ -21,8 +21,6 @@ edgePerH := 0.025
 ;;;;;;;;;;;;;;;;;;;;;;
 
 _bMouseCam := False
-
-
 Hotkey, z, MouseCamOff
 Hotkey, Alt, MouseCam
 
@@ -31,33 +29,34 @@ MouseCam:
     If (_bMouseCam)
     {
         Return
-    }
-    _bMouseCam := True
-    MouseGetPos, xpos, ypos
+    }    
+    _bMouseCam := True    
+    MouseGetPos, xpos, ypos    
     if Winexist("ahk_exe FATAL_FRAME_MOBW.exe")
     {
         WinGetPos, X, Y, Width, Height
-    }
+    }    
     if (!width or !Height)
     {
         Return
-    }
-    if (bHideMouse and FileExist(A_ScriptDir . "\nomousy.exe"))
+    }    
+    if (bHideMouse and FileExist("nomousy.exe"))
     {
-        Run, %A_ScriptDir%\nomousy.exe /hide ;hide cursor
-    }
+        shell := ComObjCreate("WScript.Shell")
+        exec := shell.Exec(ComSpec " /Q /K echo off")
+        exec.StdIn.WriteLine("nomousy.exe /hide`nexit") ;hide cursor 
+    }    
     _X := (edgePerW * Width)
     _Y := (edgePerH * height)
     _Width := (Width - _X)
-    _Height := (height - _Y)
+    _Height := (height - _Y)    
     While (_bMouseCam) 
     {
         ;sleep 5
         MouseGetPos, _xpos, _ypos
         dX := _xpos - xpos
         dY := _ypos - ypos
-        key := ""
-        
+        key := ""        
         if (Abs(dX) > Abs(dY) and (Abs(dX) >= minD))
         {
             key := bInvertX ? (dX > 0 ? leftKey : rightKey) : (dX > 0 ? rightKey : leftKey)
@@ -74,15 +73,13 @@ MouseCam:
         else if ((Abs(_ypos) >= _Height) or (Abs(_ypos) <= _Y and (Abs(_ypos) < Abs(_xpos))))
         {
             key := bInvertY ? (Abs(_ypos) >= _Height ? upKey : downKey) : (Abs(_ypos) >= _Height ? downKey : upKey)
-        }
-        
+        }        
         if (key and WinActive("ahk_exe FATAL_FRAME_MOBW.exe"))
         {
             SendInput {%key% down}
             Sleep %delay%
             SendInput {%key% up}
-        }
-        
+        }       
         xpos:=_xpos
         ypos:=_ypos
     }
@@ -91,10 +88,10 @@ MouseCam:
 
 MouseCamOff:
 {
-    _bMouseCam := False
+    _bMouseCam := False    
     if (bHideMouse and FileExist(A_ScriptDir . "\nomousy.exe"))
     {
-        Run, %A_ScriptDir%\nomousy.exe ;show cursor
-    }
+        Run, nomousy.exe ;show cursor
+    }    
     Return
 }
