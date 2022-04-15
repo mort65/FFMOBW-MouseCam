@@ -92,7 +92,7 @@ MouseCam:
 MouseCamOff:
 {
     _bMouseCam := False    
-    if (bHideMouse and FileExist(A_ScriptDir . "\nomousy.exe"))
+    if (bHideMouse and FileExist("nomousy.exe"))
     {
         Run, nomousy.exe ;show cursor
     }    
