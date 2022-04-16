@@ -83,7 +83,6 @@ MouseCam:
             key := bInvertX ? (Abs(_xpos) >= _Width ? leftKey : rightKey) : (Abs(_xpos) >= _Width ? rightKey : leftKey)
             
         }
-
         else if ((Abs(_ypos) >= _Height) or (Abs(_ypos) <= _Y and (Abs(_ypos) < Abs(_xpos))))
         {
             key := bInvertY ? (Abs(_ypos) >= _Height ? upKey : downKey) : (Abs(_ypos) >= _Height ? downKey : upKey)
