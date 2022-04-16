@@ -1,4 +1,4 @@
-#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+﻿#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 ; #Warn  ; Enable warnings to assist with detecting common errors.
 #SingleInstance Force
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
@@ -14,23 +14,24 @@ rightKey := ";"
 bHideMouse := True
 bInvertX := False
 bInvertY := False
-minD := 15
+minD := 5
 delay := 25
 edgePerW := 0.05
 edgePerH := 0.025
+maxp := 3
 ;;;;;;;;;;;;;;;;;;;;;;
 
 _bMouseCam := False
 Hotkey, z, MouseCamOff
 Hotkey, Alt, MouseCam
+Return
 
 MouseCam:
 {
     If (_bMouseCam)
     {
         Return
-    }    
-    _bMouseCam := True    
+    }       
     MouseGetPos, xpos, ypos    
     if Winexist("ahk_exe FATAL_FRAME_MOBW.exe")
     {
@@ -45,17 +46,29 @@ MouseCam:
         shell := ComObjCreate("WScript.Shell")
         exec := shell.Exec(ComSpec " /Q /K echo off")
         exec.StdIn.WriteLine("nomousy.exe /hide`nexit") ;hide cursor 
-    }    
+    }
+    _bMouseCam := True 
     _X := (edgePerW * Width)
     _Y := (edgePerH * height)
     _Width := (Width - _X)
-    _Height := (height - _Y)    
+    _Height := (height - _Y)
+    prevKey:=""
+    p:=1 ;momentum 
     While (_bMouseCam) 
     {
         ;sleep 5
+        if not WinActive("ahk_exe FATAL_FRAME_MOBW.exe")
+        {
+            sleep 50
+            Continue
+        }
         MouseGetPos, _xpos, _ypos
         dX := _xpos - xpos
         dY := _ypos - ypos
+        if (key)
+        {
+            prevKey := key
+        }
         key := ""        
         if (Abs(dX) > Abs(dY) and (Abs(dX) >= minD))
         {
@@ -64,24 +77,48 @@ MouseCam:
         else if (Abs(dX) < Abs(dY) and (Abs(dY) >= minD))
         {
             key := bInvertY ? (dY > 0 ? upKey : downkey) : (dY > 0 ? downkey : upKey)
-        }
+        }        
         else if ((Abs(_xpos) >= _Width) or (Abs(_xpos) <= _X and (Abs(_xpos) < Abs(_ypos))))
         {
             key := bInvertX ? (Abs(_xpos) >= _Width ? leftKey : rightKey) : (Abs(_xpos) >= _Width ? rightKey : leftKey)
             
         }
+
         else if ((Abs(_ypos) >= _Height) or (Abs(_ypos) <= _Y and (Abs(_ypos) < Abs(_xpos))))
         {
             key := bInvertY ? (Abs(_ypos) >= _Height ? upKey : downKey) : (Abs(_ypos) >= _Height ? downKey : upKey)
         }        
         if (key)
         {
-            if WinActive("ahk_exe FATAL_FRAME_MOBW.exe")
+            if (prevKey)
+            {
+                if (prevKey = key)
+                {
+                    if (p < maxp)
+                    {
+                        p++
+                    }
+                }
+                else 
+                {
+                    p--
+                    if (p > 0)
+                    {
+                        key := prevKey
+                    }
+                    else
+                    {
+                        p := 1
+                    }
+                }
+            }
+            if (key and WinActive("ahk_exe FATAL_FRAME_MOBW.exe"))
             {
                 SendInput {%key% down}
                 Sleep %delay%
                 SendInput {%key% up}
-            }       
+            }
+            prevKey := key
             xpos:=_xpos
             ypos:=_ypos
         }
