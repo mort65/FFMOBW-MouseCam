@@ -112,7 +112,7 @@ MouseCam:
                     }
                 }
             }
-            if (key and WinActive("ahk_exe FATAL_FRAME_MOBW.exe"))
+            if winActive("ahk_exe FATAL_FRAME_MOBW.exe")
             {
                 SendInput {%key% down}
                 Sleep %delay%
